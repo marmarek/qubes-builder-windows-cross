@@ -1,0 +1,6 @@
+mingw32-gcc
+mingw32-winpthreads-static
+mingw32-gcc-c++
+wine
+wine-mono
+mono-core
