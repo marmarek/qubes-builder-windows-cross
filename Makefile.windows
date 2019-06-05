@@ -45,6 +45,7 @@ WIN_PACKAGE_EXT ?= msm
 
 ### Settings: defaults, to be overriden by builder.conf
 
+WIN_BUILD_TYPE ?= fre
 BASE_DIST ?= fc30
 
 ### Local variables
@@ -99,7 +100,12 @@ QUBES_INCLUDE = $(DIST_BUILD_DIR)/build-deps/include
 QUBES_LIB = $(DIST_BUILD_DIR)/build-deps/lib
 QUBES_BIN = $(DIST_BUILD_DIR)/build-deps/bin
 
-CHROOT_ENV += CFLAGS="-I$(QUBES_INCLUDE)"
+CFLAGS = "-I$(QUBES_INCLUDE)"
+CFLAGS.chk = -DDEBUG -DDBG -D_DEBUG
+CFLAGS.fre =
+CFLAGS += $(CFLAGS.$(WIN_BUILD_TYPE))
+
+CHROOT_ENV += CFLAGS="$(CFLAGS)"
 CHROOT_ENV += LDFLAGS="-L$(QUBES_LIB)"
 CHROOT_ENV += DIST_SRC="$(DIST_SRC)"
 CHROOT_ENV += QUBES_INCLUDE="$(QUBES_INCLUDE)"
