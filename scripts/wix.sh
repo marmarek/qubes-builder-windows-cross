@@ -68,15 +68,25 @@ bundle() {
     fi
 }
 
-# Iterate over all installer source files.
-for f in *.wxs; do
-    build ${f%.wxs}
-done
+if [ -n "$WIN_CROSS_WIX_SOURCES" ]; then
+    for f in $WIN_CROSS_WIX_SOURCES; do
+        build ${f%.wxs}
+    done
 
-# Build bundles if present.
-for f in *.wxb; do 
-    bundle ${f%.wxb}
-done
+    for f in $WIN_CROSS_WIX_BUNDLES; do
+        bundle ${f%.wxb}
+    done
+else
+    # Iterate over all installer source files.
+    for f in *.wxs; do
+        build ${f%.wxs}
+    done
+
+    # Build bundles if present.
+    for f in *.wxb; do
+        bundle ${f%.wxb}
+    done
+fi
 
 # Return 0 without checking errorlevel because wix warnings can cause it to return nonzero values.
 # If there's an error we catch it below.
