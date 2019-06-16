@@ -41,8 +41,14 @@ build() {
     MSINAME=$FILENAME$MSISUFFIX
     MSIOUT=$MSINAME$MSIEXT
 
-    $WINEMU "$WIXPATH/candle.exe" "$FILENAME.wxs" -arch "$MSIARCH" -ext WixUIExtension -ext WixDifxAppExtension -ext WixIIsExtension
-    $WINEMU "$WIXPATH/light.exe" -sval -o "$MSIOUT" "$FILENAME.wixobj" -ext WixUIExtension -ext WixDifxAppExtension -ext WixIIsExtension -ext WixUtilExtension "$DIFXLIB"
+    # format wix fragment paths in wine syntax - with z: prefix
+    wix_fragments=
+    for fragment in $QUBES_BIN/*.wxs; do
+        wix_fragments="$wix_fragments z:$fragment"
+    done
+    rm -f *.wixobj
+    $WINEMU "$WIXPATH/candle.exe" "$FILENAME.wxs" $wix_fragments -arch "$MSIARCH" -ext WixUIExtension -ext WixDifxAppExtension -ext WixIIsExtension
+    $WINEMU "$WIXPATH/light.exe" -sval -o "$MSIOUT" *.wixobj -ext WixUIExtension -ext WixDifxAppExtension -ext WixIIsExtension -ext WixUtilExtension "$DIFXLIB"
 
     # FIXME: This is not an ideal way to check for errors because the output file may be created
     # even if wix fails to merge something in. We can't rely on wix warnings (errorlevel) because
